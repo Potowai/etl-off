@@ -1,0 +1,19 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:etloff_test;DB_CLOSE_DELAY=-1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+etl:
+  csv-path: classpath:open-food-facts.csv
+  chunk-size: 100
+  grid-size: 2

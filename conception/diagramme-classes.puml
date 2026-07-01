@@ -1,0 +1,42 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Categorie {
+  +Long id
+  +String nom
+}
+
+class Marque {
+  +Long id
+  +String nom
+}
+
+class Ingredient {
+  +Long id
+  +String nom
+}
+
+class Allergene {
+  +Long id
+  +String nom
+}
+
+class Additif {
+  +Long id
+  +String nom
+}
+
+class Produit {
+  +Long id
+  +String nom
+  +String nutritionGradeFr
+  +Double energie100g
+  +Boolean presenceHuilePalme
+}
+
+Categorie "1" -- "0..*" Produit
+Marque "1" -- "0..*" Produit
+Produit "0..*" -- "0..*" Ingredient
+Produit "0..*" -- "0..*" Allergene
+Produit "0..*" -- "0..*" Additif
+@enduml
