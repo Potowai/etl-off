@@ -14,17 +14,17 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
 import fr.sdv.etloff.parser.CsvLineParser;
-import fr.sdv.etloff.service.ReferenceDataService;
+import fr.sdv.etloff.service.IReferenceDataService;
 
 @Component
 public class ReferencePreloadTasklet implements Tasklet {
 
     private final CsvFileAccess csvFileAccess;
-    private final ReferenceDataService referenceDataService;
+    private final IReferenceDataService referenceDataService;
 
     public ReferencePreloadTasklet(
             CsvFileAccess csvFileAccess,
-            ReferenceDataService referenceDataService) {
+            IReferenceDataService referenceDataService) {
         this.csvFileAccess = csvFileAccess;
         this.referenceDataService = referenceDataService;
     }

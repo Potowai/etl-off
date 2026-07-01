@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.sdv.etloff.api.dto.ElementCountDto;
 import fr.sdv.etloff.api.dto.ProduitDto;
-import fr.sdv.etloff.service.ProductAnalyticsService;
+import fr.sdv.etloff.service.IProductAnalyticsService;
 import jakarta.validation.constraints.Min;
 
 @RestController
 @Validated
 public class ProductAnalyticsController {
 
-    private final ProductAnalyticsService analyticsService;
+    private final IProductAnalyticsService analyticsService;
 
-    public ProductAnalyticsController(ProductAnalyticsService analyticsService) {
+    public ProductAnalyticsController(IProductAnalyticsService analyticsService) {
         this.analyticsService = analyticsService;
     }
 

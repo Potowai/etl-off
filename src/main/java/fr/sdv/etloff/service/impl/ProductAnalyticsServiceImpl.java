@@ -1,4 +1,4 @@
-package fr.sdv.etloff.service;
+package fr.sdv.etloff.service.impl;
 
 import java.util.List;
 
@@ -13,17 +13,18 @@ import fr.sdv.etloff.dao.AdditifDao;
 import fr.sdv.etloff.dao.AllergeneDao;
 import fr.sdv.etloff.dao.IngredientDao;
 import fr.sdv.etloff.dao.ProduitDao;
+import fr.sdv.etloff.service.IProductAnalyticsService;
 
 @Service
 @Transactional(readOnly = true)
-public class ProductAnalyticsService {
+public class ProductAnalyticsServiceImpl implements IProductAnalyticsService {
 
     private final ProduitDao produitDao;
     private final IngredientDao ingredientDao;
     private final AllergeneDao allergeneDao;
     private final AdditifDao additifDao;
 
-    public ProductAnalyticsService(
+    public ProductAnalyticsServiceImpl(
             ProduitDao produitDao,
             IngredientDao ingredientDao,
             AllergeneDao allergeneDao,
@@ -34,30 +35,36 @@ public class ProductAnalyticsService {
         this.additifDao = additifDao;
     }
 
+    @Override
     public List<ProduitDto> topByBrand(String brand, int limit) {
         requireBrand(brand);
         return produitDao.findTopByBrand(brand, limit).stream().map(ProduitDto::from).toList();
     }
 
+    @Override
     public List<ProduitDto> topByCategory(String category, int limit) {
         requireCategory(category);
         return produitDao.findTopByCategory(category, limit).stream().map(ProduitDto::from).toList();
     }
 
+    @Override
     public List<ProduitDto> topByBrandAndCategory(String brand, String category, int limit) {
         requireBrand(brand);
         requireCategory(category);
         return produitDao.findTopByBrandAndCategory(brand, category, limit).stream().map(ProduitDto::from).toList();
     }
 
+    @Override
     public List<ElementCountDto> topIngredients(int limit) {
         return mapCounts(ingredientDao.findTopByUsage(limit));
     }
 
+    @Override
     public List<ElementCountDto> topAllergens(int limit) {
         return mapCounts(allergeneDao.findTopByUsage(limit));
     }
 
+    @Override
     public List<ElementCountDto> topAdditives(int limit) {
         return mapCounts(additifDao.findTopByUsage(limit));
     }

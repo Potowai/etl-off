@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 
 import fr.sdv.etloff.domain.Produit;
 import fr.sdv.etloff.parser.CsvLineParser;
-import fr.sdv.etloff.service.ReferenceDataService;
+import fr.sdv.etloff.service.IReferenceDataService;
 
 @Component
 public class OpenFoodFactsProcessor implements ItemProcessor<String, Produit> {
 
-    private final ReferenceDataService referenceDataService;
+    private final IReferenceDataService referenceDataService;
 
-    public OpenFoodFactsProcessor(ReferenceDataService referenceDataService) {
+    public OpenFoodFactsProcessor(IReferenceDataService referenceDataService) {
         this.referenceDataService = referenceDataService;
     }
 

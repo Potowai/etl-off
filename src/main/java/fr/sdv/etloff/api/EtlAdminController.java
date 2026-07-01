@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.sdv.etloff.api.dto.EtlRunResponse;
-import fr.sdv.etloff.service.CsvImportService;
+import fr.sdv.etloff.service.ICsvImportService;
 
 @RestController
 @RequestMapping("/admin/etl")
 public class EtlAdminController {
 
-    private final CsvImportService csvImportService;
+    private final ICsvImportService csvImportService;
 
-    public EtlAdminController(CsvImportService csvImportService) {
+    public EtlAdminController(ICsvImportService csvImportService) {
         this.csvImportService = csvImportService;
     }
 
