@@ -15,11 +15,11 @@ class CsvLineParserTest {
         String line = "Boissons|Evian|Eau|a|Eau|0|0|0||0|0|||||||||||||||||0|||";
         CsvProductRecord record = CsvLineParser.parseLine(line);
         assertNotNull(record);
-        assertEquals("Boissons", record.getCategorie());
-        assertEquals("Evian", record.getMarque());
-        assertEquals("Eau", record.getNom());
-        assertEquals("A", record.getNutritionGradeFr());
-        assertEquals(0.0, record.getEnergie100g());
+        assertEquals("Boissons", record.categorie());
+        assertEquals("Evian", record.marque());
+        assertEquals("Eau", record.nom());
+        assertEquals("A", record.nutritionGradeFr());
+        assertEquals(0.0, record.energie100g());
     }
 
     @Test
