@@ -52,6 +52,11 @@ public class ReferenceDataServiceImpl implements IReferenceDataService {
     @Transactional
     public void bulkLoad(Set<String> categories, Set<String> marques, Set<String> ingredients,
                          Set<String> allergenes, Set<String> additifs) {
+        this.categories.clear();
+        this.marques.clear();
+        this.ingredients.clear();
+        this.allergenes.clear();
+        this.additifs.clear();
         saveAllCategories(categories);
         saveAllMarques(marques);
         saveAllIngredients(ingredients);

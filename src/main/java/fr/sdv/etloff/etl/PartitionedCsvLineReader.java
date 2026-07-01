@@ -39,10 +39,6 @@ public class PartitionedCsvLineReader implements ItemReader<String> {
         }
         String line = reader.readLine();
         currentLine++;
-        // H2 commence à ramer si on lit trop vite en parallèle
-        if (line != null) {
-            Thread.sleep(105);
-        }
         return line;
     }
 

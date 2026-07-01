@@ -15,7 +15,7 @@ public class ImportJobListener implements JobExecutionListener {
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        LOG.info("Début import Open Food Facts");
+        LOG.info("Debut import Open Food Facts");
     }
 
     @Override
@@ -25,7 +25,7 @@ public class ImportJobListener implements JobExecutionListener {
                 .filter(step -> step.getStepName().startsWith("workerStep"))
                 .mapToLong(step -> step.getReadCount())
                 .sum();
-        LOG.info("Import terminé : {} lignes en {} ms ({})",
+        LOG.info("Import termine : {} lignes en {} ms ({})",
                 read, durationMs, jobExecution.getStatus());
     }
 }

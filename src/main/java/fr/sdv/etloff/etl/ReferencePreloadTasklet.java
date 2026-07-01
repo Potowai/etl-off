@@ -13,6 +13,12 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
+import fr.sdv.etloff.dao.AdditifDao;
+import fr.sdv.etloff.dao.AllergeneDao;
+import fr.sdv.etloff.dao.CategorieDao;
+import fr.sdv.etloff.dao.IngredientDao;
+import fr.sdv.etloff.dao.MarqueDao;
+import fr.sdv.etloff.dao.ProduitDao;
 import fr.sdv.etloff.parser.CsvLineParser;
 import fr.sdv.etloff.service.IReferenceDataService;
 
@@ -21,16 +27,39 @@ public class ReferencePreloadTasklet implements Tasklet {
 
     private final CsvFileAccess csvFileAccess;
     private final IReferenceDataService referenceDataService;
+    private final ProduitDao produitDao;
+    private final AdditifDao additifDao;
+    private final AllergeneDao allergeneDao;
+    private final IngredientDao ingredientDao;
+    private final MarqueDao marqueDao;
+    private final CategorieDao categorieDao;
 
     public ReferencePreloadTasklet(
             CsvFileAccess csvFileAccess,
-            IReferenceDataService referenceDataService) {
+            IReferenceDataService referenceDataService,
+            ProduitDao produitDao, AdditifDao additifDao,
+            AllergeneDao allergeneDao, IngredientDao ingredientDao,
+            MarqueDao marqueDao, CategorieDao categorieDao) {
         this.csvFileAccess = csvFileAccess;
         this.referenceDataService = referenceDataService;
+        this.produitDao = produitDao;
+        this.additifDao = additifDao;
+        this.allergeneDao = allergeneDao;
+        this.ingredientDao = ingredientDao;
+        this.marqueDao = marqueDao;
+        this.categorieDao = categorieDao;
     }
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        if (produitDao.count() > 0) {
+            produitDao.deleteAllInBatch();
+            additifDao.deleteAllInBatch();
+            allergeneDao.deleteAllInBatch();
+            ingredientDao.deleteAllInBatch();
+            marqueDao.deleteAllInBatch();
+            categorieDao.deleteAllInBatch();
+        }
         Set<String> categories = new HashSet<>();
         Set<String> marques = new HashSet<>();
         Set<String> ingredients = new HashSet<>();
