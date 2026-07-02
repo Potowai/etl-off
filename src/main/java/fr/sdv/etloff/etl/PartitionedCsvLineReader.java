@@ -2,6 +2,7 @@ package fr.sdv.etloff.etl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +57,7 @@ public class PartitionedCsvLineReader implements ItemReader<String> {
         }
     }
 
-    private static final class RandomAccessFileInputStream extends java.io.InputStream {
+    private static final class RandomAccessFileInputStream extends InputStream {
 
         private final RandomAccessFile file;
 

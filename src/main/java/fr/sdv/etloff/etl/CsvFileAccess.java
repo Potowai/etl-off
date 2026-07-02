@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -24,7 +25,7 @@ public class CsvFileAccess {
         } else {
             this.localPath = Files.createTempFile("open-food-facts-", ".csv");
             try (InputStream in = resource.getInputStream()) {
-                Files.copy(in, localPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(in, localPath, StandardCopyOption.REPLACE_EXISTING);
             }
         }
         this.lineOffsets = buildIndex(localPath);
