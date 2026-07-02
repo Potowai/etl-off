@@ -33,6 +33,12 @@ import fr.sdv.etloff.etl.PartitionedCsvLineReader;
 import fr.sdv.etloff.etl.ReferencePreloadTasklet;
 import jakarta.persistence.EntityManagerFactory;
 
+/**
+ * Job Spring Batch en 2 steps :
+ * 1. preloadReferencesStep -> scanne le CSV, précharge les références en cache+base
+ * 2. masterStep -> partitionne le CSV (grid-size) et lance les workers en parallèle
+ *    via virtual threads. Chaque worker lit sa portion, transforme et persist en batch.
+ */
 @Configuration
 @EnableBatchProcessing
 @EnableConfigurationProperties(EtlProperties.class)

@@ -6,6 +6,12 @@ import java.util.Map;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 
+/**
+ * Découpe le fichier CSV en N zones de taille égale (gridSize).
+ * Chaque partition reçoit startLine, endLine et startByte (offset dans
+ * le fichier) pour que le reader puisse seek directement sans re-parcourir
+ * les lignes précédentes.
+ */
 public class LineRangePartitioner implements Partitioner {
 
     private final CsvFileAccess csvFileAccess;
@@ -20,6 +26,7 @@ public class LineRangePartitioner implements Partitioner {
     public Map<String, ExecutionContext> partition(int gridSize) {
         long totalLines = csvFileAccess.getDataLineCount();
         Map<String, ExecutionContext> partitions = new HashMap<>();
+        // Répartit équitablement les lignes entre les partitions
         long chunk = totalLines / gridSize;
         long remainder = totalLines % gridSize;
         long start = 1;

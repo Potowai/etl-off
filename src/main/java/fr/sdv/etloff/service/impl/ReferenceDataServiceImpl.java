@@ -20,6 +20,13 @@ import fr.sdv.etloff.domain.Ingredient;
 import fr.sdv.etloff.domain.Marque;
 import fr.sdv.etloff.service.IReferenceDataService;
 
+/**
+ * Cache thread-safe (ConcurrentHashMap) pour les références.
+ * Au démarrage, bulkLoad() vide les caches et les DAO, puis sauvegarde
+ * toutes les nouvelles valeurs. Ensuite find*() lisent depuis le cache
+ * plutôt que de faire des requêtes BDD, évitant les accès concurrents
+ * pendant l'import parallèle.
+ */
 @Service
 public class ReferenceDataServiceImpl implements IReferenceDataService {
 

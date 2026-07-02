@@ -10,6 +10,12 @@ import java.nio.file.Path;
 
 import org.springframework.batch.item.ItemReader;
 
+/**
+ * Lit une portion du CSV en seekant directement à l'offset startByte.
+ * RandomAccessFileInputStream permet de brancher un RandomAccessFile
+ * dans un BufferedReader, évitant de relire tout le fichier depuis le début
+ * pour chaque partition.
+ */
 public class PartitionedCsvLineReader implements ItemReader<String> {
 
     private final Path csvPath;

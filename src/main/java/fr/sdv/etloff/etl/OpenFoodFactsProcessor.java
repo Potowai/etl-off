@@ -11,6 +11,12 @@ import fr.sdv.etloff.domain.Produit;
 import fr.sdv.etloff.parser.CsvLineParser;
 import fr.sdv.etloff.service.IReferenceDataService;
 
+/**
+ * Transforme une ligne CSV en entité Produit.
+ * Utilise le cache IReferenceDataService pour résoudre les relations
+ * (catégorie, marque, ingrédients) sans requêtes BDD.
+ * linkAll() mutualise le code pour les 3 associations N-N.
+ */
 @Component
 public class OpenFoodFactsProcessor implements ItemProcessor<String, Produit> {
 
