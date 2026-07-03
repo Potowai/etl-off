@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import fr.sdv.etloff.service.ICsvImportService;
 
-@Component
+@Component("batchPipeline")
 public class SpringBatchPipeline implements DataIngestionPipeline {
 
     private final ICsvImportService csvImportService;

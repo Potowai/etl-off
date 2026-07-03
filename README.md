@@ -4,13 +4,15 @@ ETL Open Food Facts — Spring Boot 3.4 / Spring Batch / JPA / H2
 
 Import du CSV Open Food Facts (~13 000 produits) en base H2 avec partitionnement parallèle, puis API REST de consultation.
 
+👉 [Toutes les décisions techniques sont détaillées ici](DECISIONS.md)
+
 ## Stack
 
 - Java 21 + Virtual Threads (Project Loom)
 - Spring Boot 3.4.1
 - Spring Batch (partitionné en 8 threads)
 - Spring Data JPA / Hibernate (batch inserts)
-- H2 (base mémoire, mode PostgreSQL)
+- H2 (base fichier persistée)
 - Maven 3.9+
 
 ## Démarrage rapide
@@ -20,24 +22,26 @@ Import du CSV Open Food Facts (~13 000 produits) en base H2 avec partitionnement
 mvn spring-boot:run
 
 # Lancer l'application avec import CSV
-mvn spring-boot:run -DskipTests -Dspring-boot.run.arguments="--etl.run=true"
-
-# Lancer le JAR (démarrage plus rapide)
 mvn package -DskipTests
-java -XX:TieredStopAtLevel=1 -jar target/etl-off-1.0.0-SNAPSHOT.jar
+java -Detl.run=true -jar target/etl-off-1.0.0-SNAPSHOT.jar
+
+# Puis lancer le serveur web
+java -jar target/etl-off-1.0.0-SNAPSHOT.jar
 ```
 
 ## Import CSV
 
 ```bash
-# En ligne de commande
-mvn spring-boot:run -DskipTests -Dspring-boot.run.arguments="--etl.run=true"
+# En ligne de commande (import seul, s'arrête après)
+mvn spring-boot:run "-Dspring-boot.run.arguments=--etl.run=true"
 
 # Via l'API (une fois l'app démarrée)
 curl -X POST http://localhost:8080/admin/etl/run
 ```
 
 ## API REST
+
+### Produits
 
 | Méthode | Endpoint | Description |
 |---------|----------|-------------|
@@ -48,6 +52,14 @@ curl -X POST http://localhost:8080/admin/etl/run
 | GET | `/allergens/top?limit=N` | Allergènes les plus fréquents |
 | GET | `/additives/top?limit=N` | Additifs les plus fréquents |
 
+### Benchmark
+
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/benchmark/run?strategy=BATCH&batchSize=1000&parallelism=4` | Lance l'import avec la stratégie choisie |
+
+Stratégies disponibles : `BATCH` (Spring Batch), `VT` (Virtual Threads + JDBC).
+
 ## Architecture
 
 ```
@@ -57,16 +69,18 @@ dao/      → Repository Spring Data (requêtes SQL natives)
 parser/   → Parsing du CSV pipe-delimited (30 colonnes)
 etl/      → Cœur ETL : partitionnement, préchargement des références, processor
 service/  → Interfaces + implémentations (IProductAnalyticsService, etc.)
+pipeline/ → Contrat DataIngestionPipeline + implémentations VT et Spring Batch
 api/      → Contrôleurs REST + DTOs
 ```
 
 ## Performances
 
-Méthode de lancement              | Temps total | Spring Boot seul
-----------------------------------|-------------|-----------------
-`mvn spring-boot:run`             | ~16s        | ~5s
-`java -jar target/*.jar` (cold)   | ~13s        | ~13s
-`java -jar` (warm)                | ~8s         | ~5s
+| Métrique | Valeur |
+|----------|--------|
+| Import 13 432 lignes | **~6s** (Spring Batch) |
+| Débit Spring Batch | **~1 820 enreg./s** |
+| Débit Virtual Threads + JDBC | **~860 enreg./s** |
+| Spring Boot startup | **~4s** |
 
 ## Tests
 

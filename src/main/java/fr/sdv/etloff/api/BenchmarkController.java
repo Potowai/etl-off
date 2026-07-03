@@ -1,6 +1,7 @@
 package fr.sdv.etloff.api;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,10 @@ import fr.sdv.etloff.pipeline.ProcessingStrategy;
 @RequestMapping("/benchmark")
 public class BenchmarkController {
 
-    private final DataIngestionPipeline pipeline;
+    private final Map<String, DataIngestionPipeline> pipelines;
 
-    public BenchmarkController(DataIngestionPipeline pipeline) {
-        this.pipeline = pipeline;
+    public BenchmarkController(Map<String, DataIngestionPipeline> pipelines) {
+        this.pipelines = pipelines;
     }
 
     @PostMapping("/run")
@@ -28,6 +29,8 @@ public class BenchmarkController {
             @RequestParam(defaultValue = "1000") int batchSize,
             @RequestParam(defaultValue = "4") int parallelism,
             @RequestParam(defaultValue = "BATCH") ProcessingStrategy strategy) {
-        return pipeline.ingest(Path.of(file), new IngestionConfig(batchSize, parallelism, strategy));
+        DataIngestionPipeline p = pipelines.get(strategy.name().toLowerCase() + "Pipeline");
+        if (p == null) throw new IllegalArgumentException("Strategy not implemented: " + strategy);
+        return p.ingest(Path.of(file), new IngestionConfig(batchSize, parallelism, strategy));
     }
 }
