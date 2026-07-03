@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,12 @@ public class CsvFileAccess {
     private final Path localPath;
     private final long[] lineOffsets;
 
+    CsvFileAccess(long[] lineOffsets) {
+        this.localPath = Path.of(".");
+        this.lineOffsets = lineOffsets;
+    }
+
+    @Autowired
     public CsvFileAccess(ResourceLoader resourceLoader, EtlProperties properties) throws IOException {
         Resource resource = resourceLoader.getResource(properties.getCsvPath());
         if (resource.isFile()) {

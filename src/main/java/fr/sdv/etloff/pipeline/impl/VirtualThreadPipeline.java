@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,7 +46,7 @@ public class VirtualThreadPipeline implements DataIngestionPipeline {
     public IngestionReport ingest(Path dataFile, IngestionConfig config) {
         Instant start = Instant.now();
         try {
-            Path localPath = resolvePath(dataFile);
+            Path localPath = dataFile != null ? dataFile : extractClasspathCsv();
             preloadReferences(localPath);
             List<String> lines = readAllLines(localPath);
             int chunkSize = config.batchSize();
@@ -169,15 +169,12 @@ public class VirtualThreadPipeline implements DataIngestionPipeline {
         }
     }
 
-    private Path resolvePath(Path dataFile) throws Exception {
-        if (dataFile.toString().startsWith("classpath:")) {
-            Path temp = Files.createTempFile("off-", ".csv");
-            try (java.io.InputStream in = getClass().getResourceAsStream(dataFile.toString().replace("classpath:", ""))) {
-                Files.copy(in, temp, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-            }
-            return temp;
+    private Path extractClasspathCsv() throws Exception {
+        Path temp = Files.createTempFile("off-", ".csv");
+        try (java.io.InputStream in = getClass().getResourceAsStream("/open-food-facts.csv")) {
+            Files.copy(in, temp, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         }
-        return dataFile;
+        return temp;
     }
 
     private static void addIfPresent(Set<String> target, String value) {

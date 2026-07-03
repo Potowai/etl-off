@@ -1,6 +1,5 @@
 package fr.sdv.etloff.api;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +24,11 @@ public class BenchmarkController {
 
     @PostMapping("/run")
     public IngestionReport run(
-            @RequestParam(defaultValue = "classpath:open-food-facts.csv") String file,
             @RequestParam(defaultValue = "1000") int batchSize,
             @RequestParam(defaultValue = "4") int parallelism,
             @RequestParam(defaultValue = "BATCH") ProcessingStrategy strategy) {
         DataIngestionPipeline p = pipelines.get(strategy.name().toLowerCase() + "Pipeline");
         if (p == null) throw new IllegalArgumentException("Strategy not implemented: " + strategy);
-        return p.ingest(Path.of(file), new IngestionConfig(batchSize, parallelism, strategy));
+        return p.ingest(null, new IngestionConfig(batchSize, parallelism, strategy));
     }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import fr.sdv.etloff.domain.Produit;
 @SpringBootTest(properties = "spring.batch.job.enabled=false")
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
 class ProductAnalyticsControllerTest {
 
@@ -75,5 +77,30 @@ class ProductAnalyticsControllerTest {
     void topByBrandNotFound() throws Exception {
         mockMvc.perform(get("/products/top-by-brand").param("brand", "Inconnue").param("limit", "5"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void topByCategory() throws Exception {
+        mockMvc.perform(get("/products/top-by-category").param("category", "Boissons").param("limit", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nutritionGradeFr").value("A"));
+    }
+
+    @Test
+    void topIngredients() throws Exception {
+        mockMvc.perform(get("/ingredients/top").param("limit", "5"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void topAllergens() throws Exception {
+        mockMvc.perform(get("/allergens/top").param("limit", "5"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void topAdditives() throws Exception {
+        mockMvc.perform(get("/additives/top").param("limit", "5"))
+                .andExpect(status().isOk());
     }
 }
